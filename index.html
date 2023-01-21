@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wingman Tier List</title>
+    <style>
+      /* https://lospec.com/palette-list/borkfest */
+      body {
+        background-color: #202215;
+      }
+      .tiers {
+        display: grid;
+        grid-template-columns: 100px auto;
+        grid-auto-rows: minmax(150px, auto);
+        grid-gap: 5px;
+        width: 100%;
+        max-width: 100%;
+      }
+      .tier-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-family: sans-serif;
+        color: #202215;
+      }
+      .tier-s {
+        background-color: #dfd785;
+      }
+      .tier-a {
+        background-color: #ebc275;
+      }
+      .tier-b {
+        background-color: #f39949;
+      }
+      .tier-c {
+        background-color: #ff7831;
+      }
+      .tier-d {
+        background-color: #ca5a2e;
+      }
+      .tier-label-text {
+        display: inline-block;
+      }
+      .tier-row {
+        display: flex;
+        flex-wrap: wrap;
+        background-color: #3a2802;
+      }
+      .unplaced {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .tile {
+        width: 200px;
+        height: 135px;
+        box-sizing: content-box;
+        border: 2px solid #963c3c;
+        background-color: #dfd785;
+        margin: 5px;
+        display: flex;
+        flex-direction: column;
+      }
+      .tile-image {
+        flex: 1 1 0%;
+        width: 100%;
+        height: auto;
+      }
+      .tile-label {
+        display: block;
+        flex: 0 0 auto;
+        width: 100%;
+        text-align: center;
+        font-size: 16px;
+        font-family: sans-serif;
+        color: #202215;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tiers">
+      <div class="tier-label tier-s">
+        <span class="tier-label-text">S</span>
+      </div>
+      <div class="tier-row"></div>
+      <div class="tier-label tier-a">
+        <span class="tier-label-text">A</span>
+      </div>
+      <div class="tier-row"></div>
+      <div class="tier-label tier-b">
+        <span class="tier-label-text">B</span>
+      </div>
+      <div class="tier-row"></div>
+      <div class="tier-label tier-c">
+        <span class="tier-label-text">C</span>
+      </div>
+      <div class="tier-row"></div>
+      <div class="tier-label tier-d">
+        <span class="tier-label-text">D</span>
+      </div>
+      <div class="tier-row"></div>
+    </div>
+    <div class="unplaced"></div>
+    <script>
+      const choices = {
+        blagai: { name: "Blagai", img: "./wingman/blagai.jpg" },
+        boyard: { name: "Boyard", img: "./wingman/boyard.jpg" },
+        calavera: { name: "Calavera", img: "./wingman/calavera.jpg" },
+        cascade: { name: "Cascade", img: "./wingman/cascade.jpg" },
+        chalice: { name: "Chalice", img: "./wingman/chalice.jpg" },
+        cobblestone: { name: "Cobblestone", img: "./wingman/cobblestone.jpg" },
+        crete: { name: "Crete", img: "./wingman/crete.jpg" },
+        elysion: { name: "Elysion", img: "./wingman/elysion.jpg" },
+        extraction: { name: "Extraction", img: "./wingman/extraction.jpg" },
+        guard: { name: "Guard", img: "./wingman/guard.jpg" },
+        hive: { name: "Hive", img: "./wingman/hive.jpg" },
+        inferno: { name: "Inferno", img: "./wingman/inferno.jpg" },
+        lake: { name: "Lake", img: "./wingman/lake.jpg" },
+        nuke: { name: "Nuke", img: "./wingman/nuke.jpg" },
+        overpass: { name: "Overpass", img: "./wingman/overpass.jpg" },
+        pitstop: { name: "Pitstop", img: "./wingman/pitstop.jpg" },
+        ravine: { name: "Ravine", img: "./wingman/ravine.jpg" },
+        rialto: { name: "Rialto", img: "./wingman/rialto.jpg" },
+        shortdust: { name: "Shortdust", img: "./wingman/shortdust.jpg" },
+        train: { name: "Train", img: "./wingman/train.jpg" },
+        vertigo_a: { name: "Vertigo (A Site)", img: "./wingman/vertigo_a.jpg" },
+        vertigo_b: { name: "Vertigo (B Site)", img: "./wingman/vertigo_b.jpg" },
+      };
+      const unplaced = document.querySelector(".unplaced");
+      Object.entries(choices).forEach(([id, choice]) => {
+        const { name, img } = choice;
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("tile");
+        wrapper.draggable = true;
+        wrapper.id = id;
+        unplaced.appendChild(wrapper);
+        const image = document.createElement("img");
+        image.classList.add("tile-image");
+        image.src = img;
+        wrapper.appendChild(image);
+        const label = document.createElement("span");
+        label.classList.add("tile-label");
+        label.innerText = name;
+        wrapper.appendChild(label);
+        wrapper.addEventListener("dragstart", function (ev) {
+          ev.currentTarget.style.borderStyle = "dashed";
+          ev.currentTarget.style.opacity = 0.5;
+          ev.dataTransfer.setData("text", id);
+          ev.effectAllowed = "move";
+        });
+        wrapper.addEventListener("dragend", function (ev) {
+          ev.currentTarget.style.borderStyle = "solid";
+          ev.currentTarget.style.opacity = 1;
+          ev.dataTransfer.clearData();
+        });
+      });
+      const dropZones = [
+        unplaced,
+        ...Array.from(document.querySelectorAll(".tier-row")),
+      ];
+      function isAncestor(node, target) {
+        if (!node) {
+          return false;
+        }
+        if (node === target) {
+          return false;
+        }
+        while (node.parentNode) {
+          if (node.parentNode === target) return true;
+          node = node.parentNode;
+        }
+        return false;
+      }
+      dropZones.forEach((zone) => {
+        zone.addEventListener("dragover", function (ev) {
+          ev.preventDefault();
+          if (!event.target.classList.contains("dragenter")) {
+            ev.target.classList.add("dragenter");
+          }
+        });
+        zone.addEventListener("dragleave", function (ev) {
+          ev.preventDefault();
+          if (
+            !isAncestor(ev.relatedTarget, zone) &&
+            event.target.classList.contains("dragenter")
+          ) {
+            ev.target.classList.remove("dragenter");
+          }
+        });
+        zone.addEventListener("drop", function (ev) {
+          ev.preventDefault();
+          zone.appendChild(
+            document.getElementById(ev.dataTransfer.getData("text"))
+          );
+        });
+      });
+    </script>
+  </body>
+</html>
